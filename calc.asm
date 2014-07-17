@@ -4,7 +4,8 @@ section .data
 	welcomeTextLen			equ	$-welcomeText
 	askForCommandText		db	'Enter one of the following commands: [add, sub, div, mul]',10
 	askForCommandTextLen	equ	$-askForCommandText
-
+	invalidCommandText		db	'You have entered a wrong command. Use [add, sub, div, mul] !',10
+	invalidCommandTextLen	equ $-invalidCommandText
 
 	;;;; COMANDS 
 	addCommand				db	'add'
@@ -27,13 +28,7 @@ _start:
 	mov		edx,	welcomeTextLen
 	call	_proc_print
 
-	mov		ecx,	askForCommandText
-	mov		edx,	askForCommandTextLen
-	call	_proc_print
-
-	call	_proc_readline	
-
-	call	_proc_check_command_input	
+	call	_proc_start_loop		
 
 
 	call	_exit
@@ -56,6 +51,23 @@ _proc_readline:
 	call 	_syscall
 	ret
 
+_proc_start_loop:
+	mov		ecx, 	5
+	loop 	_LOOP_main
+
+;;;; LOOP
+_LOOP_main:
+	mov		ecx,	askForCommandText
+	mov		edx,	askForCommandTextLen
+	call	_proc_print
+
+	call	_proc_readline	
+	call	_proc_check_command_input
+
+	mov		ecx, 	5
+	loop 	_LOOP_main
+
+;;;; END LOOP
 
 _proc_check_command_input:
 	push	ebp
@@ -90,7 +102,9 @@ _IF_command_mul:
 	jmp		_IF_command_END
 
 _IF_command_invalid:
-
+	mov		ecx,	invalidCommandText
+	mov		edx,	invalidCommandTextLen
+	call	_proc_print
 	jmp		_IF_command_END
 
 
