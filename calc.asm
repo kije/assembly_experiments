@@ -48,7 +48,7 @@ section .bss
 	number2: 		resb 	readBufferSize
 
 section .text
-	global _start:
+	global _start
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 _start:
