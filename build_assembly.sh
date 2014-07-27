@@ -13,7 +13,6 @@ if [ -f $1 ]; then
 	if [ $extension = "asm" ]; then
 		nasm -g -f elf32 -o "$filename.o" -O3 $1
 	elif [ $extension = "s" ]; then
-		# todo gas
 		as --32 --gstabs+  -march=i386 -mtune=i386 -o "$filename.o" --reduce-memory-overheads $1
 	fi
 s.
