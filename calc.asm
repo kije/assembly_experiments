@@ -1,25 +1,31 @@
+;;	ASMCALC by kije
+;; 	Small 32-bit calcualtor written in assembler
+
+
 section .data
 	;;;; TEXT
-	welcomeText 			db		'-- ASMCALC by kije --',10,10
-	welcomeTextLen			equ		$-welcomeText
-	askForCommandTextStart			db		'Enter one of the following commands: ['
-	askForCommandTextStartLen		equ		$-askForCommandTextStart
-	askForCommandTextEnd			db		']',10
+	welcomeText 				db		10,'-- ASMCALC by kije --',10,10
+	welcomeTextLen				equ		$-welcomeText
+	askForCommandTextStart		db		'Enter one of the following commands: ['
+	askForCommandTextStartLen	equ		$-askForCommandTextStart
+	askForCommandTextEnd		db		']',10
 	askForCommandTextEndLen		equ		$-askForCommandTextEnd
-	invalidCommandTextStart		db		'You have entered a wrong command. Use [ '
+	invalidCommandTextStart		db		'-> You have entered a wrong command. Please use ['
 	invalidCommandTextStartLen	equ 	$-invalidCommandTextStart
-	invalidCommandTextEnd		db		'] !', 10
+	invalidCommandTextEnd		db		']!', 10,10
 	invalidCommandTextEndLen	equ 	$-invalidCommandTextEnd
+	askForNumbersText			db 		'Now, enter the numbers for the calculation.',10
+	askForNumbersTextLen 		equ 	$-askForNumbersText
 
 
 	;;;; COMANDS 
-	addCommand					db		'add'
+	addCommand					db		'+'
 	addCommandLen				equ 	$-addCommand
-	subCommand					db		'sub'
+	subCommand					db		'-'
 	subCommandLen 				equ 	$-subCommand
-	mulCommand					db		'mul'
+	mulCommand					db		'*'
 	mulCommandLen 				equ 	$-mulCommand
-	divCommand					db		'div'
+	divCommand					db		'/'
 	divCommandLen 				equ 	$-divCommand
 	exitCommand					db 		'exit'
 	exitCommandLen 				equ 	$-exitCommand
@@ -28,13 +34,18 @@ section .data
 	readBufferSize				equ 	128
 	comandListSeparatorText		db 		', '
 	comandListSeparatorTextLen	equ 	$-comandListSeparatorText
+	numberPrefix				db 		'Number '
+	numberPrefixLen 			equ 	$-numberPrefix
+	eol 						db 		10
+	eolLen 						equ 	$-eol
 
 
 section .bss
 	readBuffer:		resb	readBufferSize
 	compString1:	resb 	readBufferSize
 	compString2:	resb 	readBufferSize
-
+	number1: 		resb 	readBufferSize
+	number2: 		resb 	readBufferSize
 
 section .text
 	global _start:
@@ -94,7 +105,7 @@ _proc_check_command_input:
 	call 	strcmp 
 
 	cmp		eax,	0
-	je		_IF_command_add
+	jz		_IF_command_add
 	
 	;; IF readBuffer == subCommand
 	push 	readBuffer
@@ -102,7 +113,7 @@ _proc_check_command_input:
 	call 	strcmp 
 
 	cmp		eax,	0
-	je		_IF_command_sub
+	jz		_IF_command_sub
 
 	;; IF readBuffer == divCommand
 	push 	readBuffer
@@ -110,7 +121,7 @@ _proc_check_command_input:
 	call 	strcmp 
 
 	cmp		eax,	0
-	je		_IF_command_div
+	jz		_IF_command_div
 
 	;; IF readBuffer == mulCommand
 	push 	readBuffer
@@ -118,7 +129,7 @@ _proc_check_command_input:
 	call 	strcmp 
 
 	cmp		eax,	0
-	je		_IF_command_mul
+	jz		_IF_command_mul
 
 	;; IF readBuffer == exit
 	push 	readBuffer
@@ -126,7 +137,7 @@ _proc_check_command_input:
 	call 	strcmp 
 
 	cmp		eax,	0
-	je		_IF_command_exit
+	jz		_IF_command_exit
 
 	;; ELSE
 	jmp		_IF_command_invalid
@@ -134,18 +145,22 @@ _proc_check_command_input:
 
 ;;; IF
 _IF_command_add:
-	
+	call 	_proc_get_numbers
+
 	jmp		_IF_command_END
 
 _IF_command_sub:
+	call 	_proc_get_numbers
 
 	jmp		_IF_command_END
 
 _IF_command_div:
+	call 	_proc_get_numbers
 
 	jmp		_IF_command_END
 
 _IF_command_mul:
+	call 	_proc_get_numbers
 
 	jmp		_IF_command_END
 
@@ -218,8 +233,8 @@ _proc_print_commands:
 	call 	_proc_print
 
 	;; MUL
-	mov		ecx,	divCommand
-	mov		edx,	divCommandLen
+	mov		ecx,	mulCommand
+	mov		edx,	mulCommandLen
 	call	_proc_print
 
 	mov		ecx, 	comandListSeparatorText
@@ -235,6 +250,19 @@ _proc_print_commands:
 
 
 
+
+_proc_get_numbers:
+	call 	_proc_promtp_for_numbers
+
+
+	ret
+
+_proc_promtp_for_numbers:
+	mov		ecx,	askForNumbersText
+	mov		edx,	askForNumbersTextLen
+	call	_proc_print
+
+	ret
 
 
 _syscall:
