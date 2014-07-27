@@ -1,5 +1,5 @@
 ;;	ASMCALC by kije
-;; 	Small 32-bit calcualtor written in assembler
+;; 	Small 32-bit calcualtor written in assembly
 
 
 section .data
@@ -362,4 +362,3 @@ strcmp:
 	popa                                      ;; Restore the register values. 
 	leave                                     ;; Switch back to the previous stack frame. 
 	ret 8                                      ;; Free 8 bytes after return.
-		
