@@ -15,7 +15,7 @@ if [ -f $1 ]; then
 	elif [ $extension = "s" ]; then
 		as --32 --gstabs+  -march=i386 -mtune=i386 -o "$filename.o" --reduce-memory-overheads $1
 	fi
-s.
+
 	
 	ld -s -m elf_i386 -o $filename "$filename.o"
 	
