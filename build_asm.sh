@@ -10,7 +10,14 @@ if [ -f $1 ]; then
 	extension="${filename##*.}"
 	filename="${filename%.*}"
 
-	nasm -f elf32 $1
+	if [ $extension = "asm" ]; then
+		nasm -f elf32 $1
+	elif [ $extension = "s" ]; then
+		# todo gas
+		as --32 --gstabs+  -march=i386 -mtune=i386 -o "$filename.o" --reduce-memory-overheads $1
+	fi
+
+	
 	ld -s -m elf_i386 -o $filename "$filename.o"
 	
 else
